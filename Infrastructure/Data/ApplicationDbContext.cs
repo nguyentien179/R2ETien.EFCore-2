@@ -32,7 +32,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 .HasOne(e => e.Department)
                 .WithMany(d => d.Employees)
                 .HasForeignKey(e => e.DepartmentId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(e => new { e.Name, e.DepartmentId }).IsUnique();
         });
@@ -53,7 +53,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Project>(entity =>
         {
             entity.Property(p => p.Name).IsRequired().HasMaxLength(100);
-
             entity.HasIndex(p => p.Name).IsUnique();
         });
 
@@ -66,12 +65,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity
                 .HasOne(pe => pe.Employee)
                 .WithMany(e => e.ProjectEmployees)
-                .HasForeignKey(pe => pe.EmployeeId);
+                .HasForeignKey(pe => pe.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity
                 .HasOne(pe => pe.Project)
                 .WithMany(p => p.ProjectEmployees)
-                .HasForeignKey(pe => pe.ProjectId);
+                .HasForeignKey(pe => pe.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // === Define Static GUIDs ===
@@ -109,21 +110,21 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                     Id = empAlice,
                     Name = "Alice",
                     DepartmentId = deptHR,
-                    JoinedDate = new DateTime(2023, 1, 1),
+                    JoinedDate = new DateOnly(2023, 1, 1),
                 },
                 new Employee
                 {
                     Id = empBob,
                     Name = "Bob",
                     DepartmentId = deptIT,
-                    JoinedDate = new DateTime(2022, 5, 20),
+                    JoinedDate = new DateOnly(2022, 5, 20),
                 },
                 new Employee
                 {
                     Id = empCharlie,
                     Name = "Charlie",
                     DepartmentId = deptFin,
-                    JoinedDate = new DateTime(2021, 11, 15),
+                    JoinedDate = new DateOnly(2021, 11, 15),
                 }
             );
 
