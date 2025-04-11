@@ -12,8 +12,8 @@ using R2ETien.EFCore.Infrastructure.Data;
 namespace R2ETien.EFCore.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250409052729_Second")]
-    partial class Second
+    [Migration("20250411135909_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,39 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("R2ETien.EFCore.Application.DTOs.EmployeeProjectFlatModel", b =>
+                {
+                    b.Property<Guid>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DepartmentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EmployeeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("JoinedDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProjectName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("SalaryAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
+                });
 
             modelBuilder.Entity("R2ETien.EFCore.Domain.Entities.Department", b =>
                 {
@@ -67,9 +100,9 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                     b.Property<Guid>("DepartmentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("JoinedDate")
+                    b.Property<DateOnly>("JoinedDate")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
+                        .HasColumnType("date")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Name")
@@ -81,9 +114,6 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.HasIndex("Name", "DepartmentId")
-                        .IsUnique();
-
                     b.ToTable("Employees");
 
                     b.HasData(
@@ -91,21 +121,21 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                         {
                             Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
                             DepartmentId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            JoinedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            JoinedDate = new DateOnly(2023, 1, 1),
                             Name = "Alice"
                         },
                         new
                         {
                             Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                             DepartmentId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            JoinedDate = new DateTime(2022, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            JoinedDate = new DateOnly(2022, 5, 20),
                             Name = "Bob"
                         },
                         new
                         {
                             Id = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
                             DepartmentId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            JoinedDate = new DateTime(2021, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            JoinedDate = new DateOnly(2021, 11, 15),
                             Name = "Charlie"
                         });
                 });
@@ -226,7 +256,7 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                     b.HasOne("R2ETien.EFCore.Domain.Entities.Department", "Department")
                         .WithMany("Employees")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Department");

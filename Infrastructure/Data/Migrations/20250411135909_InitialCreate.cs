@@ -43,7 +43,7 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    JoinedDate = table.Column<DateOnly>(type: "date", nullable: false, defaultValueSql: "GETDATE()"),
                     DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -54,7 +54,7 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                         column: x => x.DepartmentId,
                         principalTable: "Departments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -106,9 +106,9 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("3555b647-ab77-49a9-8800-3acf50b01737"), "IT" },
-                    { new Guid("7c9cf760-db1b-4014-888b-1a3a768e3f43"), "HR" },
-                    { new Guid("e9f05c98-f19c-40e9-97a2-099dc63fcfb0"), "Finance" }
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "HR" },
+                    { new Guid("22222222-2222-2222-2222-222222222222"), "IT" },
+                    { new Guid("33333333-3333-3333-3333-333333333333"), "Finance" }
                 });
 
             migrationBuilder.InsertData(
@@ -116,8 +116,8 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("36bb2475-a10b-445c-9735-16e399dfaacb"), "Apollo" },
-                    { new Guid("4d6b8dde-ff43-4e7f-84c5-409da7d9d0f1"), "Hermes" }
+                    { new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"), "Apollo" },
+                    { new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), "Hermes" }
                 });
 
             migrationBuilder.InsertData(
@@ -125,9 +125,9 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                 columns: new[] { "Id", "DepartmentId", "JoinedDate", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("23716b2f-115d-4a99-ae32-2e34d18f30b6"), new Guid("7c9cf760-db1b-4014-888b-1a3a768e3f43"), new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Alice" },
-                    { new Guid("8db1e41b-e756-4b85-a26f-7d1162f34346"), new Guid("3555b647-ab77-49a9-8800-3acf50b01737"), new DateTime(2022, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Bob" },
-                    { new Guid("97dfa0ee-d1c5-4b54-b9bb-77e737725429"), new Guid("e9f05c98-f19c-40e9-97a2-099dc63fcfb0"), new DateTime(2021, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Charlie" }
+                    { new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), new Guid("11111111-1111-1111-1111-111111111111"), new DateOnly(2023, 1, 1), "Alice" },
+                    { new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), new Guid("22222222-2222-2222-2222-222222222222"), new DateOnly(2022, 5, 20), "Bob" },
+                    { new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), new Guid("33333333-3333-3333-3333-333333333333"), new DateOnly(2021, 11, 15), "Charlie" }
                 });
 
             migrationBuilder.InsertData(
@@ -135,9 +135,9 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                 columns: new[] { "EmployeeId", "ProjectId", "Enable" },
                 values: new object[,]
                 {
-                    { new Guid("23716b2f-115d-4a99-ae32-2e34d18f30b6"), new Guid("36bb2475-a10b-445c-9735-16e399dfaacb"), true },
-                    { new Guid("8db1e41b-e756-4b85-a26f-7d1162f34346"), new Guid("36bb2475-a10b-445c-9735-16e399dfaacb"), true },
-                    { new Guid("97dfa0ee-d1c5-4b54-b9bb-77e737725429"), new Guid("4d6b8dde-ff43-4e7f-84c5-409da7d9d0f1"), true }
+                    { new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"), true },
+                    { new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"), true },
+                    { new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), true }
                 });
 
             migrationBuilder.InsertData(
@@ -145,21 +145,15 @@ namespace R2ETien.EFCore.Infrastructure.Data.Migrations
                 columns: new[] { "Id", "Amount", "EmployeeId" },
                 values: new object[,]
                 {
-                    { new Guid("28546848-9293-435d-bab4-57fff8ac666c"), 5000m, new Guid("23716b2f-115d-4a99-ae32-2e34d18f30b6") },
-                    { new Guid("c2a53dff-c0c6-4686-9cbb-448d896398ee"), 5500m, new Guid("97dfa0ee-d1c5-4b54-b9bb-77e737725429") },
-                    { new Guid("eed9fc38-ac26-4bc2-b997-c0877b6b8398"), 6000m, new Guid("8db1e41b-e756-4b85-a26f-7d1162f34346") }
+                    { new Guid("fa111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), 5000m, new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa") },
+                    { new Guid("fa222222-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), 6000m, new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb") },
+                    { new Guid("fa333333-cccc-cccc-cccc-cccccccccccc"), 5500m, new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc") }
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_DepartmentId",
                 table: "Employees",
                 column: "DepartmentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employees_Name_DepartmentId",
-                table: "Employees",
-                columns: new[] { "Name", "DepartmentId" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectEmployees_EmployeeId",
