@@ -1,5 +1,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
+using R2ETien.EFCore.Application.DTOs;
 using R2ETien.EFCore.Domain.Entities;
 
 namespace R2ETien.EFCore.Infrastructure.Data;
@@ -13,9 +14,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<ProjectEmployee> ProjectEmployees => Set<ProjectEmployee>();
     public DbSet<Salary> Salaries => Set<Salary>();
 
+    public DbSet<EmployeeProjectFlatModel> EmployeeProjectFlatModel =>
+        Set<EmployeeProjectFlatModel>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<EmployeeProjectFlatModel>().HasNoKey().ToView(null);
 
         modelBuilder.Entity<Department>(entity =>
         {
@@ -33,8 +39,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 .WithMany(d => d.Employees)
                 .HasForeignKey(e => e.DepartmentId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasIndex(e => new { e.Name, e.DepartmentId }).IsUnique();
         });
 
         modelBuilder.Entity<Salary>(entity =>

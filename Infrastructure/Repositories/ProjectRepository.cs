@@ -13,6 +13,7 @@ public class ProjectRepository : IProjectRepository
     {
         _context = context;
     }
+
     public async Task AddAsync(Project entity)
     {
         await _context.Projects.AddAsync(entity);
@@ -23,14 +24,33 @@ public class ProjectRepository : IProjectRepository
         _context.Projects.Remove(entity);
     }
 
+    public async Task<bool> ExistsAsync(Guid id)
+    {
+        return await _context.Projects.AnyAsync(p => p.Id == id);
+    }
+
+    public async Task<bool> ExistsByNameAsync(string name)
+    {
+        return await _context.Projects.AnyAsync(p => p.Name == name);
+    }
+
     public async Task<IEnumerable<Project>> GetAllAsync()
     {
-        return await _context.Projects.AsNoTracking().ToListAsync();
+        return await _context
+            .Projects.Include(p => p.ProjectEmployees)
+            .ThenInclude(pe => pe.Employee)
+            .ThenInclude(e => e!.Salary)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task<Project?> GetByIdAsync(Guid id)
     {
-        return await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);
+        return await _context
+            .Projects.Include(p => p.ProjectEmployees)
+            .ThenInclude(pe => pe.Employee)
+            .ThenInclude(e => e!.Salary)
+            .FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task SaveChangesAsync()

@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
+using R2ETien.EFCore.Application.Common.Filter;
 using R2ETien.EFCore.Application.DTOs.Project;
 using R2ETien.EFCore.Application.Interfaces;
 
@@ -12,8 +13,12 @@ public static class ProjectEndpoints
         var projectGroup = group.MapGroup("/projects").WithTags("Projects");
         projectGroup.MapGet("/", GetAllAsync);
         projectGroup.MapGet("/{id:guid}", GetByIdAsync);
-        projectGroup.MapPost("/", CreateAsync);
-        projectGroup.MapPut("/{id:guid}", UpdateAsync);
+        projectGroup
+            .MapPost("/", CreateAsync)
+            .AddEndpointFilter<ValidationFilter<CreateProjectDTO>>();
+        projectGroup
+            .MapPut("/{id:guid}", UpdateAsync)
+            .AddEndpointFilter<ValidationFilter<UpdateProjectDTO>>();
         projectGroup.MapDelete("/{id:guid}", DeleteAsync);
     }
 

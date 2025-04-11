@@ -32,7 +32,20 @@ public class ProjectEmployeeRepository : IProjectEmployeeRepository
 
     public async Task AddAsync(ProjectEmployee projectEmployee)
     {
-        await _context.ProjectEmployees.AddAsync(projectEmployee);
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            await _context.ProjectEmployees.AddAsync(projectEmployee);
+            await _context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public void Update(ProjectEmployee projectEmployee)
@@ -48,5 +61,12 @@ public class ProjectEmployeeRepository : IProjectEmployeeRepository
     public async Task SaveChangesAsync()
     {
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> ExistsAsync(Guid projectId, Guid employeeId)
+    {
+        return await _context.ProjectEmployees.AnyAsync(pe =>
+            pe.ProjectId == projectId && pe.EmployeeId == employeeId
+        );
     }
 }

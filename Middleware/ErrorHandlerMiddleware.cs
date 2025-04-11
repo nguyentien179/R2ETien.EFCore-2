@@ -31,7 +31,7 @@ public class ErrorHandlerMiddleware
 
         var response = context.Response;
         var statusCode = HttpStatusCode.InternalServerError;
-        string message = "An unexpected error occurred.";
+        string message = exception.Message;
 
         switch (exception)
         {

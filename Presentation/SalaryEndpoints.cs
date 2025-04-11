@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
+using R2ETien.EFCore.Application.Common.Filter;
 using R2ETien.EFCore.Application.DTOs.Salary;
 using R2ETien.EFCore.Application.Interfaces;
 
@@ -12,8 +13,12 @@ public static class SalaryEndpoints
         var salaryGroup = group.MapGroup("/salaries").WithTags("Salaries");
 
         salaryGroup.MapGet("/{employeeId:guid}", GetByEmployeeIdAsync);
-        salaryGroup.MapPost("/", CreateAsync);
-        salaryGroup.MapPut("/{employeeId:guid}", UpdateAsync);
+        salaryGroup
+            .MapPost("/", CreateAsync)
+            .AddEndpointFilter<ValidationFilter<CreateSalaryDTO>>();
+        salaryGroup
+            .MapPut("/{employeeId:guid}", UpdateAsync)
+            .AddEndpointFilter<ValidationFilter<UpdateSalaryDTO>>();
         salaryGroup.MapDelete("/{employeeId:guid}", DeleteAsync);
     }
 

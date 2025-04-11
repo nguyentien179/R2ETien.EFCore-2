@@ -1,5 +1,7 @@
 using System;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using R2ETien.EFCore.Application.Common.Filter;
 using R2ETien.EFCore.Application.DTOs.Department;
 using R2ETien.EFCore.Application.DTOs.DepartmentValidation;
 using R2ETien.EFCore.Application.Interfaces;
@@ -13,8 +15,12 @@ public static class DepartmentEndpoints
         var departmentGroup = group.MapGroup("/departments").WithTags("Department");
         departmentGroup.MapGet("/", GetAllAsync);
         departmentGroup.MapGet("/{id:guid}", GetByIdAsync);
-        departmentGroup.MapPost("/", CreateAsync);
-        departmentGroup.MapPut("/{id:guid}", UpdateAsync);
+        departmentGroup
+            .MapPost("/", CreateAsync)
+            .AddEndpointFilter<ValidationFilter<CreateDepartmentDTO>>();
+        departmentGroup
+            .MapPut("/{id:guid}", UpdateAsync)
+            .AddEndpointFilter<ValidationFilter<UpdateDepartmentDTO>>();
         departmentGroup.MapDelete("/{id:guid}", DeleteAsync);
     }
 

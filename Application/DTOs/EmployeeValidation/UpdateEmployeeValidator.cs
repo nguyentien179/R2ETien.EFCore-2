@@ -1,12 +1,13 @@
 using System;
 using FluentValidation;
 using R2ETien.EFCore.Application.DTOs.Employee;
+using R2ETien.EFCore.Infrastructure.Repositories;
 
 namespace R2ETien.EFCore.Application.DTOs.EmployeeValidation;
 
 public class UpdateEmployeeValidator : AbstractValidator<UpdateEmployeeDTO>
 {
-    public UpdateEmployeeValidator()
+    public UpdateEmployeeValidator(IDepartmentRepository departmentRepository)
     {
         RuleFor(e => e.Name)
             .NotEmpty()
@@ -18,6 +19,11 @@ public class UpdateEmployeeValidator : AbstractValidator<UpdateEmployeeDTO>
             .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
             .WithMessage("Joined date cannot be in the future.");
 
-        RuleFor(e => e.DepartmentId).NotEmpty().WithMessage("Department ID is required.");
+        RuleFor(e => e.DepartmentId)
+            .NotEmpty()
+            .WithMessage("Department ID is required.")
+            .MustAsync(async (id, _) => await departmentRepository.ExistsAsync(id))
+            .WithMessage("DepartmentId is invalid or does not exist.");
+        ;
     }
 }

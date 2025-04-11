@@ -1,6 +1,8 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
+using R2ETien.EFCore.Application.Common.Filter;
 using R2ETien.EFCore.Application.DTOs.ProjectEmployee;
+using R2ETien.EFCore.Application.DTOs.ProjectEmployeeValidation;
 using R2ETien.EFCore.Application.Interfaces;
 
 namespace R2ETien.EFCore.Presentation;
@@ -13,8 +15,13 @@ public static class ProjectEmployeeEndpoints
 
         projectEmployeeGroup.MapGet("/", GetAllAsync);
         projectEmployeeGroup.MapGet("/{projectId:guid}/{employeeId:guid}", GetByIdsAsync);
-        projectEmployeeGroup.MapPost("/", AssignAsync);
-        projectEmployeeGroup.MapPut("/{projectId:guid}/{employeeId:guid}", UpdateAsync);
+        projectEmployeeGroup
+            .MapPost("/", AssignAsync)
+            .AddEndpointFilter<ValidationFilter<CreateProjectEmployeeDTO>>();
+        projectEmployeeGroup
+            .MapPut("/{projectId:guid}/{employeeId:guid}", UpdateAsync)
+            .AddEndpointFilter<ValidationFilter<UpdateProjectEmployeDTO>>();
+        ;
         projectEmployeeGroup.MapDelete("/{projectId:guid}/{employeeId:guid}", RemoveAsync);
     }
 

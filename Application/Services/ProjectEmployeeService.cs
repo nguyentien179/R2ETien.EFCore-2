@@ -19,7 +19,6 @@ public class ProjectEmployeeService : IProjectEmployeeService
     public async Task AssignAsync(CreateProjectEmployeeDTO dto)
     {
         await _repository.AddAsync(dto.ToEntity());
-        await _repository.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<ProjectEmployeeDTO>> GetAllAsync()

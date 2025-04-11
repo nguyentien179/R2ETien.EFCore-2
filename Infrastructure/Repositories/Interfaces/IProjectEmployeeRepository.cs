@@ -11,4 +11,5 @@ public interface IProjectEmployeeRepository
     void Update(ProjectEmployee entity);
     void Delete(ProjectEmployee entity);
     Task SaveChangesAsync();
+    Task<bool> ExistsAsync(Guid projectId, Guid employeeId);
 }

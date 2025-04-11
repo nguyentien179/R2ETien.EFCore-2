@@ -18,8 +18,17 @@ public class EmployeeService : IEmployeeService
 
     public async Task CreateAsync(CreateEmployeeDTO dto)
     {
-        await _repository.AddAsync(dto.ToEntity());
-        await _repository.SaveChangesAsync();
+        try
+        {
+            await _repository.AddAsync(dto.ToEntity());
+            await _repository.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            // Log it or inspect
+            Console.WriteLine($"Error: {ex.Message}");
+            throw;
+        }
     }
 
     public async Task DeleteAsync(Guid id)
@@ -37,12 +46,41 @@ public class EmployeeService : IEmployeeService
         return employees.Select(e => e.ToDto());
     }
 
+    public async Task<IEnumerable<EmployeeWithProjectsDTO>> GetAllAsyncRawSql()
+    {
+        return await _repository.GetAllAsyncRawSql();
+    }
+
+    public async Task<IEnumerable<EmployeeWithProjectsDTO>> GetAllWithProjectsAsync()
+    {
+        var employees = await _repository.GetAllWithProjectsAsync();
+        return employees.Where(e => e is not null)!;
+    }
+
+    public async Task<IEnumerable<EmployeeWithProjectsDTO>> GetAllWithProjectsRawSqlAsync()
+    {
+        return await _repository.GetAllWithProjectsRawSqlAsync();
+    }
+
+    public async Task<IEnumerable<EmployeeWithProjectsDTO>> GetAllWithSalaryLargerThan100()
+    {
+        var employees = await _repository.GetEmployeeWithSalaryGreaterThan100();
+        return employees.Where(e => e is not null)!;
+    }
+
     public async Task<EmployeeDTO?> GetByIdAsync(Guid id)
     {
         var employee = await _repository.GetByIdAsync(id);
         return employee == null
             ? throw new KeyNotFoundException(ErrorMessages.NotFound)
             : employee.ToDto();
+    }
+
+    public async Task<
+        IEnumerable<EmployeeWithProjectsDTO>
+    > GetEmployeesWithSalaryGreaterThan100RawSql()
+    {
+        return await _repository.GetEmployeesWithSalaryGreaterThan100RawSql();
     }
 
     public async Task UpdateAsync(Guid id, UpdateEmployeeDTO dto)

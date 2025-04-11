@@ -34,7 +34,7 @@ public class ProjectService : IProjectService
     public async Task<IEnumerable<ProjectDTO>> GetAllAsync()
     {
         var projects = await _repository.GetAllAsync();
-        return projects.Select(e => e.ToDto());
+        return projects.Select(p => p.ToDto());
     }
 
     public async Task<ProjectDTO?> GetByIdAsync(Guid id)
